@@ -1,9 +1,9 @@
 ## Members
-Clément Misandeau
-Romain Baracand
-Alexandre Divol
-Théo Francois-Pichard
-Benoit Catez
+Clément Misandeau, 
+Romain Baracand, 
+Alexandre Divol, 
+Théo Francois-Pichard, 
+Benoit Catez, 
 
 ## Development Setup
 
