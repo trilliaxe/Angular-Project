@@ -1,0 +1,53 @@
+<div *ngIf="photos.length > 0">
+  <!-- Image principale -->
+  <div>
+    <button (click)="prev()" aria-label="Photo précédente" type="button">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+
+    <div (click)="onPhotoClick()">
+      <img [src]="currentImageUrl" [alt]="currentPhoto?.title" loading="eager" />
+      <div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          <line x1="11" y1="8" x2="11" y2="14"></line>
+          <line x1="8" y1="11" x2="14" y2="11"></line>
+        </svg>
+        Voir les détails
+      </div>
+    </div>
+
+    <button (click)="next()" aria-label="Photo suivante" type="button">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Infos de la photo courante -->
+  <div *ngIf="currentPhoto">
+    <h2>{{ currentPhoto.title || 'Sans titre' }}</h2>
+    <div>
+      <span *ngIf="currentPhoto.ownername">par <strong>{{ currentPhoto.ownername }}</strong></span>
+      <span *ngIf="uploadDate">· {{ uploadDate }}</span>
+      <span *ngIf="currentPhoto.views">· {{ currentPhoto.views | number }} vues</span>
+    </div>
+    <p>{{ currentIndex + 1 }} / {{ photos.length }}</p>
+  </div>
+
+  <!-- Miniatures -->
+  <div>
+    <button
+      *ngFor="let photo of photos; let i = index"
+      [class.active]="i === currentIndex"
+      (click)="goTo(i)"
+      [attr.aria-label]="'Photo ' + (i + 1)"
+      type="button"
+    >
+      <img [src]="photo.url_s || ('https://live.staticflickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '_s.jpg')" [alt]="photo.title" loading="lazy" />
+    </button>
+  </div>
+</div>

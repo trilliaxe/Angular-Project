@@ -1,0 +1,52 @@
+<div>
+
+  <!-- Header -->
+  <header>
+    <div>
+      <div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <polyline points="21 15 16 10 5 21"></polyline>
+        </svg>
+        <span>PhotoSearch <small>powered by Flickr</small></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero section (visible avant la première recherche) -->
+  <section *ngIf="!hasSearched">
+    <h1>Explorez des millions de photos</h1>
+    <p>Recherchez, filtrez et découvrez les photos de la communauté Flickr</p>
+  </section>
+
+  <!-- Barre de recherche + filtres (toujours visible) -->
+  <div [class.compact]="hasSearched">
+    <app-search-bar (searchSubmit)="onSearchSubmit($event)"></app-search-bar>
+    <app-search-filters (filtersChange)="onFiltersChange($event)"></app-search-filters>
+  </div>
+
+  <!-- Résultats -->
+  <main *ngIf="hasSearched">
+    <app-photo-list
+      [photos]="photos"
+      [loading]="loading"
+      [totalResults]="totalResults"
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      [viewMode]="viewMode"
+      [displaySize]="filters.size"
+      (photoSelected)="onPhotoSelected($event)"
+      (pageChange)="onPageChange($event)"
+      (viewModeChange)="onViewModeChange($event)"
+    ></app-photo-list>
+  </main>
+
+  <!-- Modale de détail -->
+  <app-photo-detail
+    *ngIf="selectedPhoto"
+    [photo]="selectedPhoto"
+    (close)="onDetailClose()"
+  ></app-photo-detail>
+
+</div>

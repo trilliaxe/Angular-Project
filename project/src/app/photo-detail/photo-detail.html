@@ -1,0 +1,147 @@
+<div *ngIf="photo" (click)="onBackdropClick($event)" role="dialog" aria-modal="true" aria-label="Détail de la photo">
+  <div>
+
+    <!-- En-tête -->
+    <div>
+      <h2>{{ photo.title || 'Sans titre' }}</h2>
+      <div>
+        <a [href]="photoPageUrl" target="_blank" rel="noopener" *ngIf="photoInfo">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+          Voir sur Flickr
+        </a>
+        <button (click)="onClose()" aria-label="Fermer" type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div>
+
+      <!-- Image -->
+      <div>
+        <img [src]="fullImageUrl" [alt]="photo.title" />
+      </div>
+
+      <!-- Panneau de détails -->
+      <div>
+
+        <!-- Chargement -->
+        <div *ngIf="loading">
+          <div></div>
+          <span>Chargement des détails…</span>
+        </div>
+
+        <!-- Erreur -->
+        <div *ngIf="error">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <p>{{ error }}</p>
+        </div>
+
+          <div *ngIf="!loading && !error && photoInfo">
+
+          <!-- Auteur -->
+          <div>
+            <img [src]="authorAvatarUrl" [alt]="photoInfo.owner.username" (error)="$event.target['src']='https://www.flickr.com/images/buddyicon.gif'" />
+            <div>
+              <p>{{ photoInfo.owner.realname || photoInfo.owner.username }}</p>
+              <p>@{{ photoInfo.owner.username }}</p>
+              <p *ngIf="photoInfo.owner.location">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                {{ photoInfo.owner.location }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Onglets -->
+          <div>
+            <button [class.active]="activeTab === 'info'" (click)="activeTab = 'info'" type="button">Infos</button>
+            <button [class.active]="activeTab === 'comments'" (click)="activeTab = 'comments'" type="button">
+              Commentaires
+              <span *ngIf="comments.length > 0">{{ comments.length }}</span>
+            </button>
+            <button [class.active]="activeTab === 'author'" (click)="activeTab = 'author'" type="button">
+              Auteur ({{ authorPhotos.length }})
+            </button>
+          </div>
+
+          <!-- Onglet: Infos -->
+          <div *ngIf="activeTab === 'info'">
+            <p *ngIf="photoInfo.description._content">
+              {{ photoInfo.description._content }}
+            </p>
+
+            <div *ngIf="formattedDate">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <span>Prise le {{ formattedDate }}</span>
+            </div>
+
+            <!-- Localisation -->
+            <div *ngIf="hasLocation">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              <span *ngIf="photoInfo.location">
+                {{ locationText }}
+              </span>
+              <a [href]="mapUrl" target="_blank" rel="noopener">Voir sur la carte ↗</a>
+            </div>
+
+            <!-- Tags -->
+            <div *ngIf="photoInfo.tags.tag.length">
+              <div>
+                <span *ngFor="let tag of photoInfo.tags.tag">{{ tag._content }}</span>
+              </div>
+            </div>
+
+            <!-- Vues -->
+            <div *ngIf="photo.views">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <span>{{ photo.views | number }} vues</span>
+            </div>
+          </div>
+
+          <!-- Onglet: Commentaires -->
+          <div *ngIf="activeTab === 'comments'">
+            <div *ngIf="comments.length === 0">
+              <p>Aucun commentaire pour cette photo.</p>
+            </div>
+            <div *ngFor="let comment of comments">
+              <div>
+                <strong>{{ comment.authorname }}</strong>
+                <span>{{ formatCommentDate(comment.datecreate) }}</span>
+              </div>
+              <p>{{ comment._content }}</p>
+            </div>
+          </div>
+
+          <!-- Onglet: Autres photos de l'auteur -->
+          <div *ngIf="activeTab === 'author'">
+            <div *ngIf="authorPhotos.length === 0">
+              <p>Aucune autre photo disponible.</p>
+            </div>
+            <div>
+              <div *ngFor="let ap of authorPhotos" (click)="openAuthorPhoto(ap)">
+                <img [src]="getAuthorPhotoUrl(ap)" [alt]="ap.title" loading="lazy" />
+                <div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

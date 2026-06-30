@@ -1,0 +1,82 @@
+<div>
+  <div>
+    <button (click)="togglePanel()" type="button">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      Filtres
+      <span *ngIf="activeFiltersCount > 0">{{ activeFiltersCount }}</span>
+      <svg [class.open]="panelOpen" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </button>
+
+    <button *ngIf="activeFiltersCount > 0" (click)="resetFilters()" type="button">
+      Réinitialiser
+    </button>
+  </div>
+
+  <div [class.open]="panelOpen">
+    <form [formGroup]="filtersForm">
+
+      <!-- Taille d'affichage -->
+      <div>
+        <label for="size">Taille d'affichage </label>
+        <select id="size" formControlName="size">
+          <option *ngFor="let opt of sizeOptions" [value]="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
+
+      <!-- Tri -->
+      <div>
+        <label for="sort">Trier par </label>
+        <select id="sort" formControlName="sort">
+          <option *ngFor="let opt of sortOptions" [value]="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
+
+      <!-- Type de contenu -->
+      <div>
+        <label for="contentType">Type de contenu </label>
+        <select id="contentType" formControlName="contentType">
+          <option *ngFor="let opt of contentTypes" [value]="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
+
+      <!-- Recherche sûre -->
+      <div>
+        <label for="safeSearch">Filtre de sécurité </label>
+        <select id="safeSearch" formControlName="safeSearch">
+          <option *ngFor="let opt of safeSearchOptions" [value]="opt.value">{{ opt.label }}</option>
+        </select>
+      </div>
+
+      <!-- Tags supplémentaires -->
+      <div>
+        <label for="tags">Tags (séparés par virgule) </label>
+        <input type="text" id="tags" formControlName="tags" placeholder="ex: nature, portrait" />
+      </div>
+
+      <!-- Date min -->
+      <div>
+        <label for="minUploadDate">Uploadé après </label>
+        <input type="date" id="minUploadDate" formControlName="minUploadDate" />
+      </div>
+
+      <!-- Date max -->
+      <div>
+        <label for="maxUploadDate">Uploadé avant </label>
+        <input type="date" id="maxUploadDate" formControlName="maxUploadDate" />
+      </div>
+
+      <!-- Galerie uniquement -->
+      <div>
+        <label>
+          <input type="checkbox" formControlName="inGallery" />
+          <span>Photos en galerie uniquement</span>
+        </label>
+      </div>
+
+    </form>
+  </div>
+</div>
